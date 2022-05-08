@@ -3,7 +3,7 @@
 namespace Vilija19\router;
 
 
-class router implements \Aigletter\Contracts\Routing\RouteInterface
+class Router implements \Aigletter\Contracts\Routing\RouteInterface
 {
     protected $routes;
     protected $uri;
