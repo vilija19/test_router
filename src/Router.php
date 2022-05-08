@@ -1,6 +1,6 @@
 <?php
 
-namespace Vilija19\router;
+namespace Vilija19\Router;
 
 
 class Router implements \Aigletter\Contracts\Routing\RouteInterface
