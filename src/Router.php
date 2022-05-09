@@ -6,25 +6,48 @@ namespace Vilija19\Router;
 class Router implements \Aigletter\Contracts\Routing\RouteInterface
 {
     protected $routes;
-    protected $uri;
+    protected $controller;
+    protected $method;
+    protected $outObj;
+
+    public function __construct(array $routes = [])
+    {
+        $this->routes = $routes;
+    }
 
     public function route(string $uri): callable
     {
-        $this->uri = $uri;
 
-        if ($uri === '/') {
-            // Do nothing
-            exit;
-        } elseif (isset($this->routes[$uri])) {
+        if (isset($this->routes[$uri]) && is_array($this->routes[$uri])) {
 
-            return function () { 
-                return call_user_func($this->routes[$this->uri]);
-            };
+            $actionInfo = $this->routes[$uri];
+
+            if (class_exists($actionInfo[0])) {
+                $this->controller = new $actionInfo[0];
+            }else{
+                throw new \Exception("Error. Router class not found", 1);
+            }  
+
+            if (method_exists($this->controller, $actionInfo[1])) {
+                $this->method = $actionInfo[1];
+            }else{
+                throw new \Exception("Error. Router method not found", 1);
+            }
+
+            $this->outObj = [$this->controller, $this->method];
+
+        }elseif (isset($this->routes[$uri]) && is_callable($this->routes[$uri])) {
+
+            $this->outObj = $this->routes[$uri];
 
         }else{
             
             throw new \Exception("Error. Route not found", 1);
         }
+
+        return function () { 
+            return call_user_func($this->outObj);
+        };
 
     }
 
